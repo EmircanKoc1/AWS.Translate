@@ -54,6 +54,8 @@ app.MapGet("list-languages", async (
         MaxResults = resultCount,
     };
 
+    var langs = await _amazonTranslate.ListLanguagesAsync(listLanguageRequest);
 
+    return Results.Ok(langs.Languages);
 
 app.Run();
