@@ -23,6 +23,27 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
+app.MapPost("translate-text", async (
+    [FromServices] IAmazonTranslate _amazonTranslate,
+    [FromBody] TranslateModel translateModel) =>
+{
+    if (!(LangCodeIsValid(translateModel.sourceLanguage) && LangCodeIsValid(translateModel.targetLanguage)))
+        return Results.BadRequest("invalid lang codes");
+
+
+    var translateTextRequest = new TranslateTextRequest()
+    {
+        Text = translateModel.text,
+        SourceLanguageCode = translateModel.sourceLanguage,
+        TargetLanguageCode = translateModel.targetLanguage
+    };
+
+
+    var translateTextResponse = await _amazonTranslate.TranslateTextAsync(translateTextRequest);
+
+    return Results.Ok(translateTextResponse.TranslatedText);
+
+});
 
 
 
