@@ -45,6 +45,14 @@ app.MapPost("translate-text", async (
 
 });
 
+app.MapGet("list-languages", async (
+    [FromServices] IAmazonTranslate _amazonTranslate,
+    [FromQuery] int resultCount) =>
+{
+    var listLanguageRequest = new ListLanguagesRequest()
+    {
+        MaxResults = resultCount,
+    };
 
 
 
