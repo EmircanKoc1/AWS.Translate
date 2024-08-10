@@ -59,3 +59,40 @@ app.MapGet("list-languages", async (
     return Results.Ok(langs.Languages);
 
 app.Run();
+
+
+static bool LangCodeIsValid(string langCode)
+{
+    foreach (var lang in GetLangCodes())
+        if (lang.Equals(langCode))
+            return true;
+
+    return false;
+
+}
+
+static IEnumerable<string> GetLangCodes()
+{
+    yield return "en"; // English
+    yield return "tr"; // Turkish
+    yield return "de"; // German
+    yield return "fr"; // French
+    yield return "es"; // Spanish
+    yield return "it"; // Italian
+    yield return "ja"; // Japanese
+    yield return "zh"; // Chinese (Simplified)
+    yield return "ru"; // Russian
+    yield return "ar"; // Arabic
+    yield return "pt"; // Portuguese
+    yield return "ko"; // Korean
+    yield return "fa"; // Persian (Iran)
+    yield return "hi"; // Hindi
+    yield return "el"; // Greek
+    yield return "sv"; // Swedish
+    yield return "no"; // Norwegian
+    yield return "nl"; // Dutch
+    yield return "pl"; // Polish
+
+}
+
+internal record TranslateModel(string sourceLanguage, string targetLanguage, string text);
