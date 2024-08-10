@@ -58,6 +58,54 @@ app.MapGet("list-languages", async (
 
     return Results.Ok(langs.Languages);
 
+});
+
+
+
+
+app.MapPost("translate-file", async (
+     [FromServices] IAmazonTranslate _amazonTranslate,
+     [FromForm] IFormFile file,
+     [FromQuery] string sourceLanguage,
+     [FromQuery] string targetLanguage) =>
+{
+
+
+    var contentType = GetContentTypeByFileName(file.FileName);
+
+    if (string.IsNullOrWhiteSpace(contentType))
+        return Results.BadRequest("content type not supported");
+
+    if (!(LangCodeIsValid(sourceLanguage) && (LangCodeIsValid(targetLanguage))))
+        return Results.BadRequest("lang code is not valid");
+
+
+    var memoryStream = new MemoryStream();
+
+    await file.OpenReadStream().CopyToAsync(memoryStream);
+
+    memoryStream.Position = 0;
+
+    var translateDocumentRequest = new TranslateDocumentRequest()
+    {
+        Document = new Document
+        {
+            Content = memoryStream,
+            ContentType = contentType
+        },
+        SourceLanguageCode = sourceLanguage,
+        TargetLanguageCode = targetLanguage
+    };
+
+    var translateDocumentResponse = await _amazonTranslate.TranslateDocumentAsync(translateDocumentRequest);
+
+    return Results.File(translateDocumentResponse.TranslatedDocument.Content, contentType);
+
+
+}).DisableAntiforgery();
+
+
+
 app.Run();
 
 static string GetDocumentExtension(string fileName)
