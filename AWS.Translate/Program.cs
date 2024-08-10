@@ -60,6 +60,37 @@ app.MapGet("list-languages", async (
 
 app.Run();
 
+static string GetDocumentExtension(string fileName)
+{
+    var extensionStartPosition = fileName.LastIndexOf(".");
+
+    if (extensionStartPosition is -1)
+        return "undefined extension";
+
+
+
+    var extension = fileName[++extensionStartPosition..fileName.Length];
+
+    return extension;
+}
+
+string GetContentTypeByFileName(string fileName)
+{
+
+    var extension = GetDocumentExtension(fileName);
+
+    return extension switch
+    {
+        "txt" => "text/plain",
+        "html" => "text/html",
+        "docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        _ => string.Empty
+    };
+
+}
+
+
+
 
 static bool LangCodeIsValid(string langCode)
 {
